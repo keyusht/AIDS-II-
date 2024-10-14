@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Application Development Steps</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Cognitive Application Development Steps</h1>
+        <nav>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#steps">Steps</a></li>
+                <li><a href="#graphs">Graphs</a></li>
+                <li><a href="#resources">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+   
+    <section id="introduction" class="section">
+        <h2>Introduction</h2>
+        <p>Welcome to the guide on developing cognitive applications. This guide walks you through the essential steps involved in the process, backed by visual data to enhance understanding.</p>
+    </section>
+
+
+    <section id="steps" class="section">
+        <h2>Steps Overview</h2>
+        <ol>
+            <li>
+                <strong>Define the Problem</strong>
+                <p>Clearly outline the problem you want to solve with your cognitive application. This is crucial as it sets the direction for your project.</p>
+            </li>
+            <li>
+                <strong>Data Collection</strong>
+                <p>Gather relevant data that can be used to train your model. Ensure the data is clean, well-organized, and representative of the problem domain.</p>
+            </li>
+            <li>
+                <strong>Model Selection</strong>
+                <p>Choose an appropriate model based on the problem type (classification, regression, etc.) and the nature of your data.</p>
+            </li>
+            <li>
+                <strong>Training the Model</strong>
+                <p>Train your selected model using the collected data. This involves feeding the data into the model and adjusting parameters to improve accuracy.</p>
+            </li>
+            <li>
+                <strong>Evaluation</strong>
+                <p>Test the trained model with a separate validation dataset to evaluate its performance and ensure it meets your goals.</p>
+            </li>
+            <li>
+                <strong>Deployment</strong>
+                <p>Deploy the model into a production environment where it can be accessed by users or other systems.</p>
+            </li>
+        </ol>
+    </section>
+
+
+    <section id="graphs" class="section">
+        <h2>Graphs</h2>
+        <p>Below are visual representations of the time spent on each development step and their importance in the overall process.</p>
+        <div id="google-chart" class="chart"></div>
+        <div id="d3-chart" class="chart"></div>
+    </section>
+
+
+    <section id="resources" class="section">
+        <h2>Resources</h2>
+        <p>Here are some helpful resources for further reading:</p>
+        <ul>
+            <li><a href="https://www.ibm.com/cloud/learn/cognitive-computing" target="_blank">IBM Cognitive Computing</a></li>
+            <li><a href="https://www.microsoft.com/en-us/ai/ai-lab" target="_blank">Microsoft AI Lab</a></li>
+            <li><a href="https://towardsdatascience.com/cognitive-computing-what-it-is-and-why-it-matters-5c5415170e3a" target="_blank">Towards Data Science: Cognitive Computing</a></li>
+            <li><a href="https://www.kdnuggets.com/" target="_blank">KDnuggets - AI & Data Science</a></li>
+            <li><a href="https://www.analyticsvidhya.com/" target="_blank">Analytics Vidhya</a></li>
+        </ul>
+    </section>
+
+
+    <footer>
+        <p>Contact us at <a href="mailto:info@example.com">info@example.com</a></p>
+    </footer>
+
+
+    <script src="scripts.js"></script>
+    <script>
+        // Load Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawGoogleChart);
+
+
+        function drawGoogleChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Step', 'Time Spent'],
+                ['Define the Problem',     15],
+                ['Data Collection',        30],
+                ['Model Selection',        20],
+                ['Training the Model',     25],
+                ['Evaluation',             5],
+                ['Deployment',             5]
+            ]);
+
+
+            var options = {
+                title: 'Time Spent on Each Step',
+                pieSliceText: 'label',
+                backgroundColor: '#f4f7f8',
+                legend: { position: 'right' },
+            };
+
+
+            var chart = new google.visualization.PieChart(document.getElementById('google-chart'));
+            chart.draw(data, options);
+        }
+
+
+        // D3.js Bar Chart
+        const d3Data = [
+            { step: 'Define the Problem', time: 15 },
+            { step: 'Data Collection', time: 30 },
+            { step: 'Model Selection', time: 20 },
+            { step: 'Training the Model', time: 25 },
+            { step: 'Evaluation', time: 5 },
+            { step: 'Deployment', time: 5 }
+        ];
+
+
+        const d3Width = 600;
+        const d3Height = 400;
+        const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+
+
+        const svg = d3.select('#d3-chart')
+            .append('svg')
+            .attr('width', d3Width)
+            .attr('height', d3Height);
+
+
+        // Create scales
+        const x = d3.scaleBand()
+            .domain(d3Data.map(d => d.step))
+            .range([margin.left, d3Width - margin.right])
+            .padding(0.1);
+
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(d3Data, d => d.time)]).nice()
+            .range([d3Height - margin.bottom, margin.top]);
+
+
+        // Create X Axis
+        svg.append('g')
+            .attr('transform', `translate(0,${d3Height - margin.bottom})`)
+            .call(d3.axisBottom(x));
+
+
+        // Create Y Axis
+        svg.append('g')
+            .attr('transform', `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y));
+
+
+        // Create bars
+        svg.selectAll('.bar')
+            .data(d3Data)
+            .enter().append('rect')
+            .attr('class', 'bar')
+            .attr('x', d => x(d.step))
+            .attr('y', d => y(d.time))
+            .attr('height', d => y(0) - y(d.time))
+            .attr('width', x.bandwidth())
+            .attr('fill', '#007acc');
+    </script>
+</body>
+</html>
